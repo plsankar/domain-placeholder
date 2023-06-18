@@ -1,5 +1,6 @@
 import isEmail from "isemail";
 import type { NextApiRequest, NextApiResponse } from "next";
+import fetch from "node-fetch";
 
 export type ApiResponse = {
     success: boolean;
@@ -66,7 +67,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
                 return;
             }
         }
-        res.status(200).json({ success: true, message: "Subscribed!" });
+
+        const data = new URLSearchParams();
+        data.append("email", email);
+        data.append("access_key", process.env.ACCESS_KEY ?? "");
+
+        const response = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: data,
+        });
+
+        if (response.status == 200) {
+            res.status(200).json({ success: true, message: "Subscribed!" });
+        } else {
+            res.status(200).json({ success: true, message: "Failed! Please try again later" });
+        }
     } catch (err: any) {
         res.status(500).json({ success: false, message: "Unknown Error! Please try again later" });
     }
