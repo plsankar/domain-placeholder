@@ -58,6 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
                     success: false,
                     message: "Please verify you are not a bot",
                 });
+                return;
             }
         }
         res.status(200).json({ success: true, message: "Subscribed!" });
