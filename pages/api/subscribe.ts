@@ -22,6 +22,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
     const hCaptchResponse = req.headers["g-recaptcha-response"];
     const email = req.body["email"];
 
+    console.log(process.env.HCAPTCHA_SECRET);
+    console.log(hCaptchResponse);
+
     if (!hCaptchResponse || hCaptchResponse === "") {
         res.status(400).json({
             success: false,
@@ -41,7 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
         if (process.env.NODE_ENV !== "development") {
             const params = new URLSearchParams();
             params.append("secret", process.env.HCAPTCHA_SECRET ?? "");
-            params.append("response", req.body["g-recaptcha-response"] || req.body["h-captcha-response"]);
+            params.append("response", `${hCaptchResponse}`);
 
             const response = await fetch("https://hcaptcha.com/siteverify", {
                 method: "POST",
