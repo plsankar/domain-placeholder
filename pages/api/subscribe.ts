@@ -52,6 +52,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
             });
 
             const json = (await response.json()) as HCaptchaVerifyResponse;
+
+            console.log(json);
             const { success } = json;
             if (!success) {
                 res.status(400).json({
