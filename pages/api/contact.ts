@@ -21,10 +21,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
     }
 
     const hCaptchResponse = req.headers["g-recaptcha-response"];
+    const name = req.body["name"];
     const email = req.body["email"];
-
-    console.log(process.env.HCAPTCHA_SECRET);
-    console.log(hCaptchResponse);
+    const message = req.body["message"];
 
     if (!hCaptchResponse || hCaptchResponse === "") {
         res.status(400).json({
@@ -41,6 +40,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
         });
         return;
     }
+
+    if (!name || name === "") {
+        res.status(400).json({
+            success: false,
+            message: "Please enter your name",
+        });
+        return;
+    }
+
+    if (!message || message === "") {
+        res.status(400).json({
+            success: false,
+            message: "Please enter your message",
+        });
+        return;
+    }
+
     try {
         if (process.env.NODE_ENV !== "development") {
             const params = new URLSearchParams();
@@ -68,9 +84,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
             }
         }
 
-        const data = new URLSearchParams();
+        const data = new FormData();
+        data.append("email", email);
+        data.append("name", name);
+        data.append("message", message);
         data.append("email", email);
         data.append("access_key", process.env.ACCESS_KEY ?? "");
+        data.append("subject", `Domain contact form submitted for ${req.headers.host}`);
 
         const response = await fetch("https://api.web3forms.com/submit", {
             method: "POST",
@@ -78,15 +98,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
                 "Content-Type": "application/json",
                 Accept: "application/json",
             },
-            body: data,
+            body: JSON.stringify(Object.fromEntries(data)),
         });
 
+        console.log(req.headers.host);
+        console.log(await response.json());
+
         if (response.status == 200) {
-            res.status(200).json({ success: true, message: "Subscribed!" });
+            res.status(200).json({ success: true, message: "Sent!" });
         } else {
-            res.status(200).json({ success: true, message: "Failed! Please try again later" });
+            res.status(200).json({ success: false, message: "Failed! Please try again later" });
         }
     } catch (err: any) {
+        console.log(err);
         res.status(500).json({ success: false, message: "Unknown Error! Please try again later" });
     }
 };
