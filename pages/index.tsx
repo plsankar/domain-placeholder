@@ -20,7 +20,7 @@ const Page: NextPage<Props> = ({ host }) => {
                         </div>
                     )}
                     <h1 className="text-3xl font-light text-black">{host}</h1>
-                    <p className="font-normal">This domain may be available for sale.</p>
+                    <p className="font-normal">Coming Soon.</p>
                     <ContactForm />
                 </div>
             </main>
