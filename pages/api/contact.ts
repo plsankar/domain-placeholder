@@ -26,10 +26,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
     const message = req.body["message"];
 
     if (!hCaptchResponse || hCaptchResponse === "") {
-        res.status(400).json({
-            success: false,
-            message: "Please verify you are not a bot",
-        });
+        // res.status(400).json({
+        //     success: false,
+        //     message: "Please verify you are not a bot",
+        // });
         return;
     }
 
