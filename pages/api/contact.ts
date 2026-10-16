@@ -58,31 +58,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<ApiResponse>) =
     }
 
     try {
-        if (process.env.NODE_ENV !== "development") {
-            const params = new URLSearchParams();
-            params.append("secret", process.env.HCAPTCHA_SECRET ?? "");
-            params.append("response", `${hCaptchResponse}`);
+        // if (process.env.NODE_ENV !== "development") {
+        //     const params = new URLSearchParams();
+        //     params.append("secret", process.env.HCAPTCHA_SECRET ?? "");
+        //     params.append("response", `${hCaptchResponse}`);
 
-            const response = await fetch("https://hcaptcha.com/siteverify", {
-                method: "POST",
-                body: params,
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded",
-                },
-            });
+        //     const response = await fetch("https://hcaptcha.com/siteverify", {
+        //         method: "POST",
+        //         body: params,
+        //         headers: {
+        //             "Content-Type": "application/x-www-form-urlencoded",
+        //         },
+        //     });
 
-            const json = (await response.json()) as HCaptchaVerifyResponse;
+        //     const json = (await response.json()) as HCaptchaVerifyResponse;
 
-            console.log(json);
-            const { success } = json;
-            if (!success) {
-                res.status(400).json({
-                    success: false,
-                    message: "Please verify you are not a bot",
-                });
-                return;
-            }
-        }
+        //     console.log(json);
+        //     const { success } = json;
+        //     if (!success) {
+        //         res.status(400).json({
+        //             success: false,
+        //             message: "Please verify you are not a bot",
+        //         });
+        //         return;
+        //     }
+        // }
 
         const data = new FormData();
         data.append("email", email);
